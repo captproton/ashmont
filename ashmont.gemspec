@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency('braintree', '>= 2.6.2')
+  s.add_dependency('braintree', '>= 2.74.0')
   s.add_dependency('activesupport', '>= 3.0.0')
   s.add_dependency('i18n', '>= 0.6')
   s.add_dependency('tzinfo', '>= 0.3')
