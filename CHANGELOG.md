@@ -1,3 +1,6 @@
+##v0.0.15
+* bumped release version
+
 ##v0.0.14a
 * modernized tests
 
