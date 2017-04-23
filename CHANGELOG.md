@@ -1,4 +1,7 @@
 ##v0.0.13
+* added to Travis CI for testing
+
+##v0.0.13
 * added credit for captproton and homepage url
 
 ##v0.0.12
