@@ -102,7 +102,7 @@ Here's a simple example for creating and updating a subscribed customer:
     user.save_customer(params[:customer])
 
 The above `save_customer` method will accept attributes related to
-subscriptions, customrers, and credit cards.
+subscriptions, customers, and credit cards.
 
 Testing
 -------
