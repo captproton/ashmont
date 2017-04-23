@@ -1,4 +1,4 @@
-Ashmont
+Ashmont ![Code Status](https://travis-ci.org/captproton/ashmont.svg?branch=master)
 =======
 
 Ashmont is a set of classes that make it easier to use
