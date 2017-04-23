@@ -5,9 +5,9 @@ require "ashmont/version"
 Gem::Specification.new do |s|
   s.name        = "ashmont"
   s.version     = Ashmont::VERSION.dup
-  s.authors     = ["thoughtbot"]
-  s.email       = ["jferris@thoughtbot.com"]
-  s.homepage    = ""
+  s.authors     = ["thoughtbot", "captproton (Carl Tanner)"]
+  s.email       = ["jferris@thoughtbot.com", "rocketeer.captproton@gmail.com"]
+  s.homepage    = "https://github.com/captproton/ashmont"
   s.summary     = %q{ActiveModel-like objects and helpers for interacting with Braintree.}
   s.description = %q{ActiveModel-like objects and helpers for interacting with Braintree.}
 
