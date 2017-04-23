@@ -9,12 +9,12 @@ describe Ashmont::Customer do
 
     result = Ashmont::Customer.new(token).credit_card
 
-    Braintree::Customer.should have_received(:find).with(token)
-    result.should == "first"
+    expect(Braintree::Customer).to have_received(:find).with(token)
+    expect(result).to eq("first")
   end
 
   it "returns nothing without a remote customer" do
-    Ashmont::Customer.new.credit_card.should be_nil
+    expect(Ashmont::Customer.new.credit_card).to be_nil
   end
 
   it "returns all credit cards" do
@@ -24,12 +24,12 @@ describe Ashmont::Customer do
 
     result = Ashmont::Customer.new(token).credit_cards
 
-    Braintree::Customer.should have_received(:find).with(token)
-    result.should == ["first", "second"]
+    expect(Braintree::Customer).to have_received(:find).with(token)
+    expect(result).to eq(["first", "second"])
   end
 
   it "returns an empty array without a remote customer" do
-    Ashmont::Customer.new.credit_cards.should == []
+    expect(Ashmont::Customer.new.credit_cards).to eq([])
   end
 
 
@@ -37,11 +37,11 @@ describe Ashmont::Customer do
     remote_customer = stub("customer", :email => "admin@example.com")
     Braintree::Customer.stubs(:find => remote_customer)
 
-    Ashmont::Customer.new("abc").billing_email.should == "admin@example.com"
+    expect(Ashmont::Customer.new("abc").billing_email).to eq("admin@example.com")
   end
 
   it "doesn't have an email without a remote customer" do
-    Ashmont::Customer.new.billing_email.should be_nil
+    expect(Ashmont::Customer.new.billing_email).to be_nil
   end
 
   it "creates a valid remote customer" do
@@ -52,11 +52,11 @@ describe Ashmont::Customer do
     Braintree::Customer.stubs(:create => create_result)
 
     customer = Ashmont::Customer.new
-    customer.save(attributes).should be_true
+    expect(customer.save(attributes)).to be true
 
-    Braintree::Customer.should have_received(:create).with(:email => "ben@example.com", :credit_card => {})
-    customer.token.should == token
-    customer.errors.should be_empty
+    expect(Braintree::Customer).to have_received(:create).with(:email => "ben@example.com", :credit_card => {})
+    expect(customer.token).to eq(token)
+    expect(customer.errors).to be_empty
   end
 
   it "creates a remote customer with a credit card" do
@@ -82,7 +82,7 @@ describe Ashmont::Customer do
       :country_name => "United States of America"
     )
 
-    Braintree::Customer.should have_received(:create).with(
+    expect(Braintree::Customer).to have_received(:create).with(
       :email => "jrobot@example.com",
       :credit_card => {
         :cardholder_name => "Jim Robot",
@@ -114,10 +114,10 @@ describe Ashmont::Customer do
     Ashmont::Errors.stubs(:new => errors)
 
     customer = Ashmont::Customer.new
-    customer.save("email" => "ben.franklin@example.com").should be_false
+    expect(customer.save("email" => "ben.franklin@example.com")).to be false
 
-    Ashmont::Errors.should have_received(:new).with(verification, error_messages)
-    customer.errors.should == errors
+    expect(Ashmont::Errors).to have_received(:new).with(verification, error_messages)
+    expect(customer.errors).to eq(errors)
   end
 
   it "updates a remote customer with valid changes" do
@@ -128,10 +128,10 @@ describe Ashmont::Customer do
     Braintree::Customer.stubs(:update => update_result)
 
     customer = Ashmont::Customer.new(token)
-    customer.save(updates).should be_true
+    expect(customer.save(updates)).to be true
 
-    Braintree::Customer.should have_received(:update).with(token, :email => "somebody@example.com", :credit_card => {})
-    customer.billing_email.should == "somebody@example.com"
+    expect(Braintree::Customer).to have_received(:update).with(token, :email => "somebody@example.com", :credit_card => {})
+    expect(customer.billing_email).to eq("somebody@example.com")
   end
 
   it "updates a remote customer with a credit card" do
@@ -159,7 +159,7 @@ describe Ashmont::Customer do
       :country_name => "United States of America"
     )
 
-    Braintree::Customer.should have_received(:update).with(
+    expect(Braintree::Customer).to have_received(:update).with(
       token,
       :email => "jrobot@example.com",
       :credit_card => {
@@ -195,10 +195,10 @@ describe Ashmont::Customer do
     Ashmont::Errors.stubs(:new => errors)
 
     customer = Ashmont::Customer.new("xyz")
-    customer.save("email" => "ben.franklin@example.com").should be_false
+    expect(customer.save("email" => "ben.franklin@example.com")).to be false
 
-    Ashmont::Errors.should have_received(:new).with(verification, error_messages)
-    customer.errors.should == errors
+    expect(Ashmont::Errors).to have_received(:new).with(verification, error_messages)
+    expect(customer.errors).to eq(errors)
   end
 
   it "delete a remote customer" do
@@ -208,7 +208,7 @@ describe Ashmont::Customer do
     customer = Ashmont::Customer.new(token)
     customer.delete
 
-    Braintree::Customer.should have_received(:delete).with(token)
+    expect(Braintree::Customer).to have_received(:delete).with(token)
   end
 
   it "has billing info with a credit card" do
@@ -218,8 +218,8 @@ describe Ashmont::Customer do
     Braintree::Customer.stubs(:find => remote_customer)
 
     customer = Ashmont::Customer.new("xyz")
-    customer.should have_billing_info
-    customer.payment_method_token.should == token
+    expect(customer).to have_billing_info
+    expect(customer.payment_method_token).to  eq(token)
   end
 
   it "doesn't have billing info without a credit card" do
@@ -227,8 +227,8 @@ describe Ashmont::Customer do
     Braintree::Customer.stubs(:find => remote_customer)
 
     customer = Ashmont::Customer.new("xyz")
-    customer.should_not have_billing_info
-    customer.payment_method_token.should be_nil
+    expect(customer).to_not have_billing_info
+    expect(customer.payment_method_token).to be_nil
   end
 
   %w(last_4 cardholder_name expiration_month expiration_year).each do |credit_card_attribute|
@@ -237,7 +237,7 @@ describe Ashmont::Customer do
       remote_customer = stub("customer", :credit_cards => [credit_card])
       Braintree::Customer.stubs(:find => remote_customer)
 
-      Ashmont::Customer.new("xyz").send(credit_card_attribute).should == "expected"
+      expect(Ashmont::Customer.new("xyz").send(credit_card_attribute)).to eq("expected")
     end
   end
 
@@ -248,7 +248,7 @@ describe Ashmont::Customer do
       remote_customer = stub("customer", :credit_cards => [credit_card])
       Braintree::Customer.stubs(:find => remote_customer)
 
-      Ashmont::Customer.new("xyz").send(billing_address_attribute).should == "expected"
+      expect(Ashmont::Customer.new("xyz").send(billing_address_attribute)).to eq("expected")
     end
   end
 
@@ -260,10 +260,10 @@ describe Ashmont::Customer do
     Braintree::TransparentRedirect.stubs(:confirm => confirm_result)
 
     customer = Ashmont::Customer.new
-    customer.confirm(query_string).should be_true
+    expect(customer.confirm(query_string)).to be true
 
-    Braintree::TransparentRedirect.should have_received(:confirm).with(query_string)
-    customer.token.should == token
+    expect(Braintree::TransparentRedirect).to have_received(:confirm).with(query_string)
+    expect(customer.token).to eq(token)
   end
 
   it "adds errors for an invalid transparent redirect query string" do
@@ -278,9 +278,9 @@ describe Ashmont::Customer do
     Ashmont::Errors.stubs(:new => errors)
 
     customer = Ashmont::Customer.new
-    customer.confirm("abc").should be_false
+    expect(customer.confirm("abc")).to be false
 
-    Ashmont::Errors.should have_received(:new).with(verification, error_messages)
-    customer.errors.should == errors
+    expect(Ashmont::Errors).to have_received(:new).with(verification, error_messages)
+    expect(customer.errors).to eq(errors)
   end
 end

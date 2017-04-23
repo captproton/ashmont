@@ -1,3 +1,3 @@
 module Ashmont
-  VERSION = "0.0.14"
+  VERSION = "0.0.14a"
 end

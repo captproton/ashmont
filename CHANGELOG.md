@@ -1,3 +1,6 @@
+##v0.0.14a
+* modernized tests
+
 ##v0.0.13
 * added to Travis CI for testing
 

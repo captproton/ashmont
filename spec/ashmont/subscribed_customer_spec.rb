@@ -10,8 +10,8 @@ describe Ashmont::SubscribedCustomer do
     delegated_methods.each do |method|
       customer.stubs(method => "expected")
       result = subscribed_customer.send(method, "argument")
-      customer.should have_received(method).with("argument")
-      result.should == "expected"
+      expect(customer).to have_received(method).with("argument")
+      expect(result).to eq("expected")
     end
   end
 
@@ -21,15 +21,15 @@ describe Ashmont::SubscribedCustomer do
     %w(reload status next_billing_date transactions most_recent_transaction retry_charge past_due?).each do |method|
       subscription.stubs(method => "expected")
       result = subscribed_customer.send(method, "argument")
-      subscription.should have_received(method).with("argument")
-      result.should == "expected"
+      expect(subscription).to have_received(method).with("argument")
+      expect(result).to eq("expected")
     end
   end
 
   it "delegates #subscription_token to its subscription's token" do
     subscription = stub("subscription", :token => "expected")
     subscribed_customer = build_subscribed_customer(:subscription => subscription)
-    subscribed_customer.subscription_token.should == "expected"
+    expect(subscribed_customer.subscription_token).to eq("expected")
   end
 
   it "#reloads the subscription" do
@@ -38,8 +38,8 @@ describe Ashmont::SubscribedCustomer do
 
     result = subscribed_customer.reload
 
-    subscription.should have_received(:reload)
-    result.should == "expected"
+    expect(subscription).to have_received(:reload)
+    expect(result).to eq("expected")
   end
 
   it "can #save the customer" do
@@ -49,8 +49,8 @@ describe Ashmont::SubscribedCustomer do
 
     result = subscribed_customer.save(attributes)
 
-    customer.should have_received(:save).with(attributes)
-    result.should be_true
+    expect(customer).to have_received(:save).with(attributes)
+    expect(result).to be true
   end
 
   it "saves a new customer without attributes" do
@@ -59,7 +59,7 @@ describe Ashmont::SubscribedCustomer do
 
     subscribed_customer.save({})
 
-    customer.should have_received(:save).with({})
+    expect(customer).to have_received(:save).with({})
   end
 
   it "doesn't #save the customer without any customer attributes" do
@@ -69,7 +69,7 @@ describe Ashmont::SubscribedCustomer do
 
     subscribed_customer.save(attributes)
 
-    customer.should have_received(:save).never
+    expect(customer).to have_received(:save).never
   end
 
   it "can #save the subscription" do
@@ -81,8 +81,8 @@ describe Ashmont::SubscribedCustomer do
 
     result = subscribed_customer.save(attributes)
 
-    subscription.should have_received(:save).with(:plan_id => 41, :price => "15", :payment_method_token => payment_method_token)
-    result.should == "expected"
+    expect(subscription).to have_received(:save).with(:plan_id => 41, :price => "15", :payment_method_token => payment_method_token)
+    expect(result).to eq("expected")
   end
 
   it "retries the subscription when past due" do
@@ -91,7 +91,7 @@ describe Ashmont::SubscribedCustomer do
     subscribed_customer = build_subscribed_customer(:subscription => subscription)
     subscribed_customer.save({})
 
-    subscription.should have_received(:retry_charge)
+    expect(subscription).to have_received(:retry_charge)
   end
 
   it "merges #errors from the customer and subscription" do
@@ -99,7 +99,7 @@ describe Ashmont::SubscribedCustomer do
     customer = stub("customer", :errors => stub_errors("two" => "second"))
     subscribed_customer = build_subscribed_customer(:subscription => subscription, :customer => customer)
 
-    subscribed_customer.errors.to_hash.should == { "one" => "first", "two" => "second" }
+    expect(subscribed_customer.errors.to_hash).to eq({ "one" => "first", "two" => "second" })
   end
 
   def build_subscribed_customer(options = {})
