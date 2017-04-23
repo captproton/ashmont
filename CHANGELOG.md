@@ -1,3 +1,6 @@
+##v0.10.0
+* bumped version number for gem release
+
 ##v0.10.0a
 * fixed typo in README.md
 * bumped version number to reflect the overall modernization of the code
