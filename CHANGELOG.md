@@ -1,3 +1,7 @@
+##v0.0.12
+
+* bumped up version of braintree gem in gemspec
+
 ## v0.0.11
 
 * initial release
