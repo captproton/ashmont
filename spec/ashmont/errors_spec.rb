@@ -33,7 +33,7 @@ describe Ashmont::Errors do
   it "handles error results without a status" do
     result = {}
     errors = [ stub("error", :attribute => "foo", :message => "bar") ]
-    expect { Ashmont::Errors.new(result, errors).to_hash }.to_not raise_error(NoMethodError)
+    expect { Ashmont::Errors.new(result, errors).to_hash }.to_not raise_error
   end
 
   def errors_for(options = {})
