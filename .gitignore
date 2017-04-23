@@ -4,4 +4,6 @@ Gemfile.lock
 pkg/*
 ~
 *.swp
-*.swo
+i*.swo
+# ruby version and gemsets
+.ruby-*
