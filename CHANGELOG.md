@@ -1,3 +1,6 @@
+##v0.0.13
+* added credit for captproton and homepage url
+
 ##v0.0.12
 
 * bumped up version of braintree gem in gemspec
