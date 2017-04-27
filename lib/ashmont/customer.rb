@@ -23,6 +23,18 @@ module Ashmont
       end
     end
 
+    
+    def paypal_account
+      paypal_accounts[0]
+    end
+    def paypal_accounts
+      if persisted?
+        remote_customer.paypal_accounts
+      else
+        []
+      end
+    end
+    
     def has_billing_info?
       credit_card.present?
     end

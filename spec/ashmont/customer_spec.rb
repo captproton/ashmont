@@ -2,6 +2,30 @@ require 'spec_helper'
 require 'ashmont/customer'
 
 describe Ashmont::Customer do
+  it "returns all paypal accounts" do
+    token = "xyz"
+    remote_customer = stub("customer", :paypal_accounts => ["first", "second"])
+    Braintree::Customer.stubs(:find => remote_customer)
+
+    result = Ashmont::Customer.new(token).paypal_accounts
+
+    
+    expect(Braintree::Customer).to have_received(:find).with(token)
+    expect(result).to eq(["first", "second"])
+  end
+
+  it "returns its first paypal_account" do
+    token = "xyz"
+    remote_customer = stub("customer", :paypal_accounts => ["first", "second"])
+    Braintree::Customer.stubs(:find => remote_customer)
+
+    result = Ashmont::Customer.new(token).paypal_account
+
+    expect(Braintree::Customer).to have_received(:find).with(token)
+    expect(result).to eq("first")
+  end
+
+
   it "returns its first credit card" do
     token = "xyz"
     remote_customer = stub("customer", :credit_cards => ["first", "second"])
