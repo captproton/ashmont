@@ -1,3 +1,6 @@
+## v0.10.1
+* ADDED: #paypal_account to Customer
+
 ##v0.10.0
 * bumped version number for gem release
 
