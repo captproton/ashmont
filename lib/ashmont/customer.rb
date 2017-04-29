@@ -45,7 +45,7 @@ module Ashmont
     
     def primary_payment_account
       if persisted?
-        primary_payment_method[]
+        primary_payment_method[0]
       else
         []
       end
