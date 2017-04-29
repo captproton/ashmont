@@ -12,7 +12,9 @@ module Ashmont
     end
 
     def credit_card
+      # old way
       credit_cards[0]
+      # primary_payment_account # too general
     end
 
     def credit_cards
@@ -37,19 +39,18 @@ module Ashmont
     
     def primary_payment_method
       #currently, usually there is only one payment method, paypal or credit_card
-      payment_methods = { credit_cards.count => :credit_cards, 
-                          paypal_accounts.count => :paypal_accounts }
-      chosen_method = (payment_methods[payment_methods.keys.max])
-      remote_customer.send(chosen_method)
-    end
-    
-    def primary_payment_account
       if persisted?
-        primary_payment_method[]
+        payment_methods = { credit_cards.count => :credit_cards, 
+                            paypal_accounts.count => :paypal_accounts }
+        chosen_method = (payment_methods[payment_methods.keys.max])
+        remote_customer.send(chosen_method)
       else
         []
       end
-      
+    end
+    
+    def primary_payment_account
+        primary_payment_method[0]
     end
     
     def has_billing_info?
