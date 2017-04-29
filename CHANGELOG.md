@@ -1,3 +1,6 @@
+##v0.11.1
+* ADDED: #primary_payment_account to Customer to get the first primary_payment_method
+
 ## v0.11.0
 * ADDED: #primary_payment_method to Customer to choose between credit cards and paypal
 
