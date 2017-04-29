@@ -2,49 +2,83 @@ require 'spec_helper'
 require 'ashmont/customer'
 
 describe Ashmont::Customer do
+  describe '#primaray_payment_method' do
+    it 'chooses paypal_accounts as the primary_payment_method when the customer does' do
+      token = "xyz"
+      remote_customer = stub("customer", :paypal_accounts => ["first", "second"], :credit_cards => [])
+      Braintree::Customer.stubs(:find => remote_customer)
+
+      result = Ashmont::Customer.new(token).primary_payment_method
+
+      expect(Braintree::Customer).to have_received(:find).with(token)
+      expect(result).to eq(["first", "second"])    
+    end
+
+    it 'chooses credit_cards as the primary_payment_method when the customer does' do
+      token = "xyz"
+      remote_customer = stub("customer", :paypal_accounts => [], :credit_cards => ["first", "second"])
+      Braintree::Customer.stubs(:find => remote_customer)
+
+      result = Ashmont::Customer.new(token).primary_payment_method
+
+      expect(Braintree::Customer).to have_received(:find).with(token)
+      expect(result).to eq(["first", "second"])    
+    end
+  end
   
-  it 'chooses paypal_accounts as the primary_payment_method when the customer does' do
-    token = "xyz"
-    remote_customer = stub("customer", :paypal_accounts => ["first", "second"], :credit_cards => [])
-    Braintree::Customer.stubs(:find => remote_customer)
+  describe '#primary_payment_account' do
+    it 'returns the first account of the primary_payment_method when it is paypal' do
+      token = "xyz"
+      remote_customer = stub("customer", :paypal_accounts => ["first", "second"], :credit_cards => [])
+      Braintree::Customer.stubs(:find => remote_customer)
 
-    result = Ashmont::Customer.new(token).primary_payment_method
+      result = Ashmont::Customer.new(token).primary_payment_account
 
-    expect(Braintree::Customer).to have_received(:find).with(token)
-    expect(result).to eq(["first", "second"])    
-  end
+      expect(Braintree::Customer).to have_received(:find).with(token)
+      expect(result).to eq("first")
+    end
 
-  it 'chooses credit_cards as the primary_payment_method when the customer does' do
-    token = "xyz"
-    remote_customer = stub("customer", :paypal_accounts => [], :credit_cards => ["first", "second"])
-    Braintree::Customer.stubs(:find => remote_customer)
+    it 'returns the first account of the primary_payment_method when it is a credit card' do
+      token = "xyz"
+      remote_customer = stub("customer", :paypal_accounts => [], :credit_cards => ["first", "second"])
+      Braintree::Customer.stubs(:find => remote_customer)
 
-    result = Ashmont::Customer.new(token).primary_payment_method
+      result = Ashmont::Customer.new(token).primary_payment_account
 
-    expect(Braintree::Customer).to have_received(:find).with(token)
-    expect(result).to eq(["first", "second"])    
-  end
+      expect(Braintree::Customer).to have_received(:find).with(token)
+      expect(result).to eq("first")
+    end
 
-  it 'returns the first account of the primary_payment_method when it is paypal' do
-    token = "xyz"
-    remote_customer = stub("customer", :paypal_accounts => ["first", "second"], :credit_cards => [])
-    Braintree::Customer.stubs(:find => remote_customer)
+    it 'when the payment account is a credit card, it returns credit card attributes' do
+      token = "xyz"
+      first_credit_card_attributes = { token: "3328xj", 
+        billing_address: nil, 
+        bin: "411111", 
+        card_type: "Visa", 
+        cardholder_name: nil, 
+        customer_id: "898484653", 
+        expiration_month: "12", 
+        expiration_year: "2021", 
+        last_4: "1111", 
+        prepaid: "Unknown", 
+        payroll: "Unknown", 
+        product_id: "Unknown", 
+        commercial: "Unknown", 
+        debit: "Unknown", 
+        durbin_regulated: "Unknown", 
+        healthcare: "Unknown", 
+        country_of_issuance: "Unknown", 
+        issuing_bank: "Unknown", 
+        image_url: "https://assets.braintreegateway.com/payment_method_logo/visa.png?environment=sandbox"
+      }
+      remote_customer = stub("customer", :paypal_accounts => [], :credit_cards => [first_credit_card_attributes, "second"])
+      Braintree::Customer.stubs(:find => remote_customer)
 
-    result = Ashmont::Customer.new(token).primary_payment_account
+      result = Ashmont::Customer.new(token).primary_payment_account
 
-    expect(Braintree::Customer).to have_received(:find).with(token)
-    expect(result).to eq("first")        
-  end
-
-  it 'returns the first account of the primary_payment_method when it is a credit card' do
-    token = "xyz"
-    remote_customer = stub("customer", :paypal_accounts => [], :credit_cards => ["first", "second"])
-    Braintree::Customer.stubs(:find => remote_customer)
-
-    result = Ashmont::Customer.new(token).primary_payment_account
-
-    expect(Braintree::Customer).to have_received(:find).with(token)
-    expect(result).to eq("first")        
+      expect(Braintree::Customer).to have_received(:find).with(token)
+      expect(result).to eq(first_credit_card_attributes)              
+    end
   end
 
   it "returns all paypal accounts" do
@@ -73,7 +107,7 @@ describe Ashmont::Customer do
 
   it "returns its first credit card" do
     token = "xyz"
-    remote_customer = stub("customer", :credit_cards => ["first", "second"])
+    remote_customer = stub("customer", :credit_cards => ["first", "second"], :paypal_accounts => [])
     Braintree::Customer.stubs(:find => remote_customer)
 
     result = Ashmont::Customer.new(token).credit_card
