@@ -35,6 +35,23 @@ module Ashmont
       end
     end
     
+    def primary_payment_method
+      #currently, usually there is only one payment method, paypal or credit_card
+      payment_methods = { credit_cards.count => :credit_cards, 
+                          paypal_accounts.count => :paypal_accounts }
+      chosen_method = (payment_methods[payment_methods.keys.max])
+      remote_customer.send(chosen_method)
+    end
+    
+    def primary_payment_account
+      if persisted?
+        primary_payment_method[]
+      else
+        []
+      end
+      
+    end
+    
     def has_billing_info?
       credit_card.present?
     end

@@ -2,6 +2,29 @@ require 'spec_helper'
 require 'ashmont/customer'
 
 describe Ashmont::Customer do
+  
+  it 'chooses paypal_accounts as the primary_payment_method when the customer does' do
+    token = "xyz"
+    remote_customer = stub("customer", :paypal_accounts => ["first", "second"], :credit_cards => [])
+    Braintree::Customer.stubs(:find => remote_customer)
+
+    result = Ashmont::Customer.new(token).primary_payment_method
+
+    expect(Braintree::Customer).to have_received(:find).with(token)
+    expect(result).to eq(["first", "second"])    
+  end
+
+  it 'chooses credit_cards as the primary_payment_method when the customer does' do
+    token = "xyz"
+    remote_customer = stub("customer", :paypal_accounts => [], :credit_cards => ["first", "second"])
+    Braintree::Customer.stubs(:find => remote_customer)
+
+    result = Ashmont::Customer.new(token).primary_payment_method
+
+    expect(Braintree::Customer).to have_received(:find).with(token)
+    expect(result).to eq(["first", "second"])    
+  end
+
   it "returns all paypal accounts" do
     token = "xyz"
     remote_customer = stub("customer", :paypal_accounts => ["first", "second"])
